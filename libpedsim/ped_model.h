@@ -14,10 +14,14 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <thread>
 
 #include "ped_agent.h"
 
+#define THREADS 8
+
 namespace Ped{
+
 	class Tagent;
 
 	// The implementation modes for Assignment 1 + 2:
@@ -33,6 +37,8 @@ namespace Ped{
 		
 		// Coordinates a time step in the scenario: move all agents by one step (if applicable).
 		void tick();
+   
+    static void tick_actors(int start, int end, Ped::Model* modl);
 
 		// Returns the agents of this scenario
 		const std::vector<Tagent*> getAgents() const { return agents; };
@@ -57,6 +63,9 @@ namespace Ped{
 
 		// The agents in this scenario
 		std::vector<Tagent*> agents;
+
+    // The agents in this scenario
+		//std::thread thrds[THREADS];
 
 		// The waypoints in this scenario
 		std::vector<Twaypoint*> destinations;

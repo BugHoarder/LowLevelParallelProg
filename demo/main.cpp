@@ -33,6 +33,7 @@ int main(int argc, char*argv[]) {
 	bool timing_mode = 0;
 	int i = 1;
 	QString scenefile = "scenario.xml";
+  Ped::IMPLEMENTATION impl;
 
 	// Argument handling
 	while (i < argc)
@@ -46,8 +47,24 @@ int main(int argc, char*argv[]) {
 			}
 			else if (strcmp(&argv[i][2], "help") == 0)
 			{
-				cout << "Usage: " << argv[0] << " [--help] [--timing-mode] [scenario]" << endl;
+				cout << "Usage: " << argv[0] << 
+          " [--help] [--timing-mode] [--OMP] [--PTHREAD] [--SEQ] [scenario]" << endl;
 				return 0;
+			}
+      else if (strcmp(&argv[i][2], "OMP") == 0)
+			{
+				cout << "Running with OpenMP\n";
+        impl = Ped::OMP;
+			}
+      else if (strcmp(&argv[i][2], "PTHREAD") == 0)
+			{
+				cout << "Running with PThreads\n";
+        impl = Ped::PTHREAD;
+			}
+      else if (strcmp(&argv[i][2], "SEQ") == 0)
+			{
+				cout << "Running sequential\n";
+        impl = Ped::SEQ;
 			}
 			else
 			{
@@ -102,7 +119,7 @@ int main(int argc, char*argv[]) {
 
 			// Change this variable when testing different versions of your code. 
 			// May need modification or extension in later assignments depending on your implementations
-			Ped::IMPLEMENTATION implementation_to_test = Ped::SEQ;
+			Ped::IMPLEMENTATION implementation_to_test = impl;
 			{
 				Ped::Model model;
 				ParseScenario parser(scenefile);

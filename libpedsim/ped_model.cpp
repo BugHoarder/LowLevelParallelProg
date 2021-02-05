@@ -17,6 +17,8 @@
 
 #include <stdlib.h>
 
+
+
 void Ped::Model::setup(std::vector<Ped::Tagent*> agentsInScenario, std::vector<Twaypoint*> destinationsInScenario, IMPLEMENTATION implementation)
 {
 	// Convenience test: does CUDA work on this machine?
@@ -33,11 +35,80 @@ void Ped::Model::setup(std::vector<Ped::Tagent*> agentsInScenario, std::vector<T
 
 	// Set up heatmap (relevant for Assignment 4)
 	setupHeatmapSeq();
+  
 }
 
 void Ped::Model::tick()
 {
-	// EDIT HERE FOR ASSIGNMENT 1
+  int chunk, rest, start, end;
+  
+  static thread thrds[THREADS];
+  
+  omp_set_num_threads(THREADS);
+  
+  switch (this->implementation)
+  {
+    case OMP:
+      //cout << "openmp tick\n";
+      //#pragma omp parallel num_threads(4) 
+      #pragma omp parallel for
+      for(int i=0; i<agents.size(); i++){
+        // Set the agent's position
+        agents[i]->computeNextDesiredPosition(); 
+    	  agents[i]->setX(agents[i]->getDesiredX());
+        agents[i]->setY(agents[i]->getDesiredY());    
+      }
+      break;
+    case PTHREAD:
+      //cout << "cpp thread tick\n";
+      chunk = agents.size()/THREADS;
+      rest = agents.size()%THREADS;
+      
+      for (int i=0; i<THREADS; i++){
+        //cout << "i = " << i << ", i*chunk = " << i*chunk << ", (i+1)*chunk-1 = " << (i+1)*chunk-1 << 
+        //  ", rest = " <<      rest << ", agents.size() = " << agents.size() << std::endl;
+        start = i*chunk;
+        end = 0;
+        if (i == (THREADS-1)){
+          end = (i+1)*chunk-1+rest;
+          //cout << "i = " << i << ", start = " << start << ", end = " << end << 
+          //  "agents.size() = " << agents.size() << std::endl; 
+          thrds[i] = std::thread(tick_actors, start, end, this);
+        }
+        else{
+          end = (i+1)*chunk-1;
+          //cout << "i = " << i << ", start = " << start << ", end = " << end << 
+          //  "agents.size() = " << agents.size() << std::endl;    
+          thrds[i] = std::thread(tick_actors, start, end, this);
+          //thrds[i] = new std::thread(tick_actors, i*chunk, (i+1)*chunk-1);
+        } 
+      }
+      
+      for (int i=0; i<THREADS; i++){
+        thrds[i].join();
+      }
+      break;
+    default:
+      //cout << "serial execution tick\n";
+      for(int i=0; i<agents.size(); i++){
+        // Set the agent's position
+        agents[i]->computeNextDesiredPosition(); 
+    	  agents[i]->setX(agents[i]->getDesiredX());
+        agents[i]->setY(agents[i]->getDesiredY());    
+      }    
+  }
+	
+}
+
+void Ped::Model::tick_actors(int start, int end, Ped::Model* modl)
+{
+  //cout << "start = " << start << "\n";
+  for(int i=start; i<=end; i++){
+    // Set the agent's position
+    modl->agents[i]->computeNextDesiredPosition(); 
+	  modl->agents[i]->setX(modl->agents[i]->getDesiredX());
+    modl->agents[i]->setY(modl->agents[i]->getDesiredY());    
+  }
 }
 
 ////////////
