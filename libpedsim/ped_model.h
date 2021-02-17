@@ -38,7 +38,7 @@ namespace Ped{
 		// Coordinates a time step in the scenario: move all agents by one step (if applicable).
 		void tick();
    
-    static void tick_actors(int start, int end, Ped::Model* modl);
+		static void tick_actors(int start, int end, Ped::Model* modl);
 
 		// Returns the agents of this scenario
 		const std::vector<Tagent*> getAgents() const { return agents; };

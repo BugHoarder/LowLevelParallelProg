@@ -21,21 +21,33 @@
 
 void Ped::Model::setup(std::vector<Ped::Tagent*> agentsInScenario, std::vector<Twaypoint*> destinationsInScenario, IMPLEMENTATION implementation)
 {
-	// Convenience test: does CUDA work on this machine?
-	cuda_test();
-
-	// Set 
-	agents = std::vector<Ped::Tagent*>(agentsInScenario.begin(), agentsInScenario.end());
-
-	// Set up destinations
-	destinations = std::vector<Ped::Twaypoint*>(destinationsInScenario.begin(), destinationsInScenario.end());
-
-	// Sets the chosen implemenation. Standard in the given code is SEQ
-	this->implementation = implementation;
-
-	// Set up heatmap (relevant for Assignment 4)
-	setupHeatmapSeq();
+  // Convenience test: does CUDA work on this machine?
+  cuda_test();
   
+  // Set 
+  agents = std::vector<Ped::Tagent*>(agentsInScenario.begin(), agentsInScenario.end());
+
+  // Create the vectors 
+  std::vector<int> *arr_x = new std::vector<int>();
+  std::vector<int> *arr_y = new std::vector<int>();
+  std::vector<int> *arr_dx = new std::vector<int>();
+  std::vector<int> *arr_dy = new std::vector<int>();
+  std::vector<Twaypoint*> *arr_destination = new std::vector<Twaypoint*>;
+  std::vector<Twaypoint*> *arr_lastDestination = new std::vector<Twaypoint*>;
+  //std::vector<deque<Twaypoint*> > *arr_waypoints = new std::vector<deque<Twaypoint*>>;
+  
+  for (int i = 0; i < agents.size(); i++){
+    agents[i]->initPointers(i, arr_x, arr_y, arr_dx, arr_dy, NULL, NULL);
+  }
+  
+  // Set up destinations
+  destinations = std::vector<Ped::Twaypoint*>(destinationsInScenario.begin(), destinationsInScenario.end());
+  
+  // Sets the chosen implemenation. Standard in the given code is SEQ
+  this->implementation = implementation;
+  
+  // Set up heatmap (relevant for Assignment 4)
+  setupHeatmapSeq();
 }
 
 void Ped::Model::tick()
@@ -93,7 +105,7 @@ void Ped::Model::tick()
       for(int i=0; i<agents.size(); i++){
         // Set the agent's position
         agents[i]->computeNextDesiredPosition(); 
-    	  agents[i]->setX(agents[i]->getDesiredX());
+	agents[i]->setX(agents[i]->getDesiredX());
         agents[i]->setY(agents[i]->getDesiredY());    
       }    
   }

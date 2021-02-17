@@ -22,42 +22,58 @@
 using namespace std;
 
 namespace Ped {
-	class Twaypoint;
+        class Twaypoint;
 
 	class Tagent {
 	public:
 		Tagent(int posX, int posY);
 		Tagent(double posX, double posY);
 
+		void initPointers(int i, 
+				  vector<int> *x, vector<int> *y, 
+				  vector<int> *dx, vector<int> *dy, 
+				  vector<Twaypoint*> *des, 
+				  vector<Twaypoint*> *ldes);
+
 		// Returns the coordinates of the desired position
-		int getDesiredX() const { return desiredPositionX; }
-		int getDesiredY() const { return desiredPositionY; }
+		int getDesiredX() const { return arr_desiredPositionX->at(index); }
+		int getDesiredY() const { return arr_desiredPositionY->at(index); }
 
 		// Sets the agent's position
-		void setX(int newX) { x = newX; }
-		void setY(int newY) { y = newY; }
+		void setX(int newX) { arr_x->at(index) = newX; }
+		void setY(int newY) { arr_y->at(index) = newY; }
 
 		// Update the position according to get closer
 		// to the current destination
 		void computeNextDesiredPosition();
 
 		// Position of agent defined by x and y
-		int getX() const { return x; };
-		int getY() const { return y; };
+		int getX() const { return arr_x->at(index); };
+		int getY() const { return arr_y->at(index); };
 
 		// Adds a new waypoint to reach for this agent
 		void addWaypoint(Twaypoint* wp);
 
 	private:
+		vector<int> *arr_x;
+		vector<int> *arr_y;
+		vector<int> *arr_desiredPositionX;
+		vector<int> *arr_desiredPositionY;
+		vector<Twaypoint*> *arr_destination;
+		vector<Twaypoint*> *arr_lastDestination;
+		//vector<deque<Twaypoint*>> *arr_waypoints;
+
 		Tagent() {};
+
+		int index; // position in vectors
 
 		// The agent's current position
 		int x;
 		int y;
 
 		// The agent's desired next position
-		int desiredPositionX;
-		int desiredPositionY;
+		//int desiredPositionX;
+		//int desiredPositionY;
 
 		// The current destination (may require several steps to reach)
 		Twaypoint* destination;
