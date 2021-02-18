@@ -10,36 +10,46 @@
 #include <math.h>
 
 #include <stdlib.h>
+#include <iostream>
 
 Ped::Tagent::Tagent(int posX, int posY) {
-	Ped::Tagent::init(posX, posY);
+  isinitialised = false;
+  Ped::Tagent::init(posX, posY);
 }
 
 Ped::Tagent::Tagent(double posX, double posY) {
-	Ped::Tagent::init((int)round(posX), (int)round(posY));
+  isinitialised = false;
+  Ped::Tagent::init((int)round(posX), (int)round(posY));
 }
 
-void Ped::Tagent::initPointers(int i, vector<int> *ax, vector<int> *ay, 
-			       vector<int> *dx, vector<int> *dy, 
+void Ped::Tagent::initPointers(int i, int *ax, int *ay, 
+			       int *dx, int *dy, 
 			       vector<Twaypoint*> *des, vector<Twaypoint*> *ldes) {
+  isinitialised = true;
   index = i;
   arr_x = ax;
   arr_y = ay;
+
+  arr_x[index] = x;
+  arr_y[index] = y;
+
   arr_desiredPositionX = dx;
   arr_desiredPositionY = dy;
   arr_destination = des;
   arr_lastDestination = ldes;
+  
+  arr_destination->at(index) = NULL;
+  arr_lastDestination->at(index) = NULL;
+
   //arr_waypoints = wp;
 
-  arr_x->at(index) = x;
-  arr_y->at(index) = y;
+  arr_x[index] = x;
+  arr_y[index] = y;
 }
 
 void Ped::Tagent::init(int posX, int posY) {
-  arr_x->at(index) = posX;
-  arr_y->at(index) = posY;
-  arr_destination->at(index) = NULL;
-  arr_lastDestination->at(index) = NULL;
+  x = posX;
+  y = posY;
 }
 
 void Ped::Tagent::computeNextDesiredPosition() {
@@ -50,11 +60,11 @@ void Ped::Tagent::computeNextDesiredPosition() {
     return;
   }
   
-  double diffX = arr_destination->at(index)->getx() - arr_x->at(index);
-  double diffY = arr_destination->at(index)->gety() - arr_y->at(index);
+  double diffX = arr_destination->at(index)->getx() - arr_x[index];
+  double diffY = arr_destination->at(index)->gety() - arr_y[index];
   double len = sqrt(diffX * diffX + diffY * diffY);
-  arr_desiredPositionX->at(index) = (int) round(arr_x->at(index) + diffX / len);
-  arr_desiredPositionY->at(index) = (int) round(arr_y->at(index) + diffY / len);
+  arr_desiredPositionX[index] = (int) round(arr_x[index] + diffX / len);
+  arr_desiredPositionY[index] = (int) round(arr_y[index] + diffY / len);
 }
 
 void Ped::Tagent::addWaypoint(Twaypoint* wp) {
@@ -67,8 +77,8 @@ Ped::Twaypoint* Ped::Tagent::getNextDestination() {
   
   if (destination != NULL) {
     // compute if agent reached its current destination
-    double diffX = arr_destination->at(index)->getx() - arr_x->at(index);
-    double diffY = arr_destination->at(index)->gety() - arr_y->at(index);
+    double diffX = arr_destination->at(index)->getx() - arr_x[index];
+    double diffY = arr_destination->at(index)->gety() - arr_y[index];
     double length = sqrt(diffX * diffX + diffY * diffY);
     agentReachedDestination = length < destination->getr();
   }

@@ -30,35 +30,48 @@ namespace Ped {
 		Tagent(double posX, double posY);
 
 		void initPointers(int i, 
-				  vector<int> *x, vector<int> *y, 
-				  vector<int> *dx, vector<int> *dy, 
+				  int *x, int *y, 
+				  int *dx, int *dy, 
 				  vector<Twaypoint*> *des, 
 				  vector<Twaypoint*> *ldes);
 
 		// Returns the coordinates of the desired position
-		int getDesiredX() const { return arr_desiredPositionX->at(index); }
-		int getDesiredY() const { return arr_desiredPositionY->at(index); }
+		int getDesiredX() const { return arr_desiredPositionX[index]; }
+		int getDesiredY() const { return arr_desiredPositionY[index]; }
 
 		// Sets the agent's position
-		void setX(int newX) { arr_x->at(index) = newX; }
-		void setY(int newY) { arr_y->at(index) = newY; }
+		void setX(int newX) { arr_x[index] = newX; }
+		void setY(int newY) { arr_y[index] = newY; }
 
 		// Update the position according to get closer
 		// to the current destination
 		void computeNextDesiredPosition();
 
 		// Position of agent defined by x and y
-		int getX() const { return arr_x->at(index); };
-		int getY() const { return arr_y->at(index); };
+		// These have been modified such that they return the packed values if initialised
+		int getX() const { 
+		  if (isinitialised)
+		    return arr_x[index];
+		  else
+		    return x;
+		};
+		
+		int getY() const { 
+		  if (isinitialised) 
+		    return arr_y[index];
+		  else
+		    return y;
+		};
 
 		// Adds a new waypoint to reach for this agent
 		void addWaypoint(Twaypoint* wp);
 
 	private:
-		vector<int> *arr_x;
-		vector<int> *arr_y;
-		vector<int> *arr_desiredPositionX;
-		vector<int> *arr_desiredPositionY;
+		bool isinitialised;
+		int *arr_x;
+		int *arr_y;
+		int *arr_desiredPositionX;
+		int *arr_desiredPositionY;
 		vector<Twaypoint*> *arr_destination;
 		vector<Twaypoint*> *arr_lastDestination;
 		//vector<deque<Twaypoint*>> *arr_waypoints;

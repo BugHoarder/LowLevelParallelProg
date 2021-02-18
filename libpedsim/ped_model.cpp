@@ -17,29 +17,43 @@
 
 #include <stdlib.h>
 
-
-
 void Ped::Model::setup(std::vector<Ped::Tagent*> agentsInScenario, std::vector<Twaypoint*> destinationsInScenario, IMPLEMENTATION implementation)
 {
   // Convenience test: does CUDA work on this machine?
   cuda_test();
-  
+
+  cout << "hello1" << std::endl;
+
   // Set 
   agents = std::vector<Ped::Tagent*>(agentsInScenario.begin(), agentsInScenario.end());
 
+  cout << "hello2" << std::endl;
+
+  int s = agents.size();
+
   // Create the vectors 
-  std::vector<int> *arr_x = new std::vector<int>();
-  std::vector<int> *arr_y = new std::vector<int>();
-  std::vector<int> *arr_dx = new std::vector<int>();
-  std::vector<int> *arr_dy = new std::vector<int>();
-  std::vector<Twaypoint*> *arr_destination = new std::vector<Twaypoint*>;
-  std::vector<Twaypoint*> *arr_lastDestination = new std::vector<Twaypoint*>;
+  //std::vector<int> *arr_x = new std::vector<int>(s);
+  //std::vector<int> *arr_y = new std::vector<int>(s);
+  //std::vector<int> *arr_dx = new std::vector<int>(s);
+  //std::vector<int> *arr_dy = new std::vector<int>(s);
+  int *arr_x = (int*) malloc(sizeof(int) * s);
+  int *arr_y = (int*) malloc(sizeof(int) * s);
+  int *arr_dx = (int*) malloc(sizeof(int) * s);
+  int *arr_dy = (int*) malloc(sizeof(int) * s);
+  
+  //std::vector<Twaypoint*> *arr_destination = new std::vector<Twaypoint*>(s);
+  //std::vector<Twaypoint*> *arr_lastDestination = new std::vector<Twaypoint*>(s);
   //std::vector<deque<Twaypoint*> > *arr_waypoints = new std::vector<deque<Twaypoint*>>;
   
+  cout << "after making arrays" << std::endl;
+
   for (int i = 0; i < agents.size(); i++){
+    cout << "i:" << i << std::endl; 
     agents[i]->initPointers(i, arr_x, arr_y, arr_dx, arr_dy, NULL, NULL);
   }
   
+  cout << "after init" << std::endl;
+
   // Set up destinations
   destinations = std::vector<Ped::Twaypoint*>(destinationsInScenario.begin(), destinationsInScenario.end());
   
