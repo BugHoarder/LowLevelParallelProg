@@ -24,27 +24,23 @@ Ped::Tagent::Tagent(double posX, double posY) {
 
 void Ped::Tagent::initPointers(int i, int *ax, int *ay, 
 			       int *dx, int *dy, 
-			       vector<Twaypoint*> *des, vector<Twaypoint*> *ldes) {
+			       int *desix, int *desiy) {
   isinitialised = true;
   index = i;
   arr_x = ax;
   arr_y = ay;
 
-  arr_x[index] = x;
-  arr_y[index] = y;
-
   arr_desiredPositionX = dx;
   arr_desiredPositionY = dy;
-  arr_destination = des;
-  arr_lastDestination = ldes;
+  arr_destinationX = desix;
+  arr_destinationY = desiy;
   
-  arr_destination->at(index) = NULL;
-  arr_lastDestination->at(index) = NULL;
-
-  //arr_waypoints = wp;
-
+  // Make sure all values are initialised
+  arr_desiredPositionX[index] = 0;
+  arr_desiredPositionY[index] = 0;
   arr_x[index] = x;
   arr_y[index] = y;
+  destination = NULL;
 }
 
 void Ped::Tagent::init(int posX, int posY) {
@@ -52,16 +48,30 @@ void Ped::Tagent::init(int posX, int posY) {
   y = posY;
 }
 
+/*
+  COMPUTE NEXT DESIRED POSITION
+  diffx = dest.x - x
+  diffy = dest.y - y
+  len = sqrt( diffx * diffx + diffy * diffy )
+  desix = round(x + diffx / len)
+  desiy = round(y + diffy / len)
+ */
+
 void Ped::Tagent::computeNextDesiredPosition() {
   destination = getNextDestination();
+
+  // Update values
+  arr_destinationX[index] = destination->getx();
+  arr_destinationY[index] = destination->gety();
+
   if (destination == NULL) {
     // no destination, no need to
     // compute where to move to
     return;
   }
   
-  double diffX = arr_destination->at(index)->getx() - arr_x[index];
-  double diffY = arr_destination->at(index)->gety() - arr_y[index];
+  double diffX = arr_destinationX[index] - arr_x[index];
+  double diffY = arr_destinationY[index] - arr_y[index];
   double len = sqrt(diffX * diffX + diffY * diffY);
   arr_desiredPositionX[index] = (int) round(arr_x[index] + diffX / len);
   arr_desiredPositionY[index] = (int) round(arr_y[index] + diffY / len);
@@ -77,8 +87,8 @@ Ped::Twaypoint* Ped::Tagent::getNextDestination() {
   
   if (destination != NULL) {
     // compute if agent reached its current destination
-    double diffX = arr_destination->at(index)->getx() - arr_x[index];
-    double diffY = arr_destination->at(index)->gety() - arr_y[index];
+    double diffX = arr_destinationX[index] - arr_x[index];
+    double diffY = arr_destinationY[index] - arr_y[index];
     double length = sqrt(diffX * diffX + diffY * diffY);
     agentReachedDestination = length < destination->getr();
   }

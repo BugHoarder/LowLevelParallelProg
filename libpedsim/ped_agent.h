@@ -32,8 +32,7 @@ namespace Ped {
 		void initPointers(int i, 
 				  int *x, int *y, 
 				  int *dx, int *dy, 
-				  vector<Twaypoint*> *des, 
-				  vector<Twaypoint*> *ldes);
+				  int *desix, int *desiy);
 
 		// Returns the coordinates of the desired position
 		int getDesiredX() const { return arr_desiredPositionX[index]; }
@@ -68,12 +67,17 @@ namespace Ped {
 
 	private:
 		bool isinitialised;
+		
+		// Pointers to externally aligned data
 		int *arr_x;
 		int *arr_y;
 		int *arr_desiredPositionX;
 		int *arr_desiredPositionY;
-		vector<Twaypoint*> *arr_destination;
-		vector<Twaypoint*> *arr_lastDestination;
+		int *arr_destinationX;
+		int *arr_destinationY;
+
+		//vector<Twaypoint*> *arr_destination;
+		//vector<Twaypoint*> *arr_lastDestination;
 		//vector<deque<Twaypoint*>> *arr_waypoints;
 
 		Tagent() {};
@@ -92,7 +96,7 @@ namespace Ped {
 		Twaypoint* destination;
 
 		// The last destination
-		Twaypoint* lastDestination;
+		//Twaypoint* lastDestination;
 
 		// The queue of all destinations that this agent still has to visit
 		deque<Twaypoint*> waypoints;

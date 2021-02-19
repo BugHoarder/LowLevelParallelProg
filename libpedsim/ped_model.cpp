@@ -40,6 +40,8 @@ void Ped::Model::setup(std::vector<Ped::Tagent*> agentsInScenario, std::vector<T
   int *arr_y = (int*) malloc(sizeof(int) * s);
   int *arr_dx = (int*) malloc(sizeof(int) * s);
   int *arr_dy = (int*) malloc(sizeof(int) * s);
+  int *arr_destx = (int*) malloc(sizeof(int) * s);
+  int *arr_desty = (int*) malloc(sizeof(int) * s);
   
   //std::vector<Twaypoint*> *arr_destination = new std::vector<Twaypoint*>(s);
   //std::vector<Twaypoint*> *arr_lastDestination = new std::vector<Twaypoint*>(s);
